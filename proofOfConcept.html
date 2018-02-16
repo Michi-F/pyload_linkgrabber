@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Cache-control" content="no-cache">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="shareOnlineLinkGrabber.js"></script>
+
+<script type="text/javascript">
+    function linkCallbackFunction(downloadLink)
+	{
+		$("#captchaIframe").attr("src","about:blank");
+		$("#captchaIframeDiv").css("display", "none");
+		
+		$("#download_link").attr('href', downloadLink);
+		$("#download_link").html(downloadLink);
+		$("#downloadLinkDiv").css("display", "block");
+	}
+	
+	function getDownloadLink()
+	{
+		$("#captchaIframeDiv").css("display", "block");
+		$("#download_link").attr('href', "about:blank;");
+		$("#download_link").html("");
+		$("#downloadLinkDiv").css("display", "none");		
+		
+		let linkToGrab = $("#file_to_download").val();
+		linkGrabber.grabShareOnlineDownloadLink(linkToGrab);
+	}
+	
+	var linkGrabber = null;	
+	$(document).ready(function() {
+		linkGrabber = new shareOnlineLinkGrabber("captchaIframeId","captchaIframeName",linkCallbackFunction);
+	});
+	
+</script>
+
+<style>
+	iframe#captchaIframeId
+	{
+		position:relative;
+		width:869px;
+		height:756px;
+		margin-left:-153px;
+		margin-top:-157px;
+		border: 1px solid green;
+	}
+	div#captchaIframeDiv
+	{
+		overflow:hidden;
+		width:700px;
+		height:583px;
+		border: 0px solid red;
+		display:none;
+	}
+	div#downloadLinkDiv
+	{
+		style="color:red;
+		font-size:large;
+		display:none;"
+	}
+</style>
+
+</head>
+<body>
+
+This demo uses Tampermonkey and iframe to get the download link from share-online, which could then be forwarded to pyload.
+To run this demo:
+<ul>
+	<li>Install Tampermonkey</li>
+	<li>add the "shareOnlineLinkGrabber_tampermonkey.js"-Script to Tampermonkey</li>
+</ul>
+If this is done, reload this page. Then you can start to test it:
+<ul>
+	<li>Insert a link (http://www.share-online.biz/dl/...) into the text box</li>
+	<li>click on the button "load this link to iframe"</li>
+	<li>an iframe with the share-online page should appear</li>
+	<li>solve the captcha, you don't have to wait for the 15s-timer to finish</li>
+	<li>after solving the captcha, you'll see a 30s-timer - wait until it is finished</li>
+	<li>right after the timer is finished, the iframe should disappear and the download link should appear</li>
+	<li>This is it! That download link can be used by the pyload server now</li>
+</ul>
+
+<br />
+
+Share-Online Link to download:
+<input type="text" id="file_to_download" size="50" value="" />
+<input type="button" onclick="javascript:getDownloadLink();" value="load this link to iframe">
+<br />
+
+<div id="downloadLinkDiv">
+	<h1>Here is the download link: <br />
+		<a href="" id="download_link"></a>
+	</h1>
+</div>
+</br></br>
+
+<div id="captchaIframeDiv">
+	<iframe src="about:blank" name="captchaIframeName" id="captchaIframeId" sandbox="allow-scripts allow-forms allow-same-origin">
+	  <p>Your browser does not support iframes.</p>
+	</iframe>
+</div>
+</body>
+</html>
