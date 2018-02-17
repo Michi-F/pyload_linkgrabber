@@ -87,7 +87,6 @@ shareOnlineLinkGrabber.prototype.postShareOnlineLinkToIframe = function(url)
 shareOnlineLinkGrabber.prototype.iframeLoaded = function(event)
 {
 	linkGrabberInstance = event.data;
-	console.log(linkGrabberInstance._active);
 	if(linkGrabberInstance._active)
 	{
 		returnObject = {actionCode: linkGrabberInstance.captchaIframeActionCodes.activatePyloadLinkGrabber, value:null};
