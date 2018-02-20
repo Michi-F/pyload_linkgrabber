@@ -77,10 +77,10 @@ shareOnlineLinkGrabber.prototype.grabShareOnlineDownloadLink = function(download
 // this function creates a temporary form, and triggers a POST request to share-online to load the page in the iframe
 shareOnlineLinkGrabber.prototype.postShareOnlineLinkToIframe = function(url)
 {
-	$('body').append('<form action="'+url+'" method="POST"  target="'+this._iframeName+'" id="postToIframeForm">');
+	$('body').append('<form action="'+url+'" method="POST" target="'+this._iframeName+'" id="postToIframeForm">');
 	$('#postToIframeForm').append('<input type="hidden" name="dl_free" value="1" />');
 	$('#postToIframeForm').append('<input type="hidden" name="choice" value="free" />');
-    $('#postToIframeForm').submit().remove();
+	$('#postToIframeForm').submit().remove();
 }
 
 //this function is called when the iframe is loaded, and it activates the link grabber of the tampermonkey script

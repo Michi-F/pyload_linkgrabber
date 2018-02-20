@@ -26,34 +26,34 @@
 */
 
 (function() {
-    'use strict';
+	'use strict';
 
 	// action codes for communication with pyload main page
-    window.pyloadActionCodes = {
+	window.pyloadActionCodes = {
 		activatePyloadLinkGrabber:"activatePyloadLinkGrabber",
 		sendDownloadLink:"sendDownloadLink"
 	};
 
 	// 1s timer, checks if captcha is completed, activated by "activatePyloadLinkGrabber" postMessage-command from pyload
-    window.pyloadLinkGrabberInterval = false;
+	window.pyloadLinkGrabberInterval = false;
 
 	// this function listens to messages from the pyload main page
-    window.addEventListener('message', function(e) {
-        var request = jQuery.parseJSON(e.data);
-        var returnObject = null;
-        if(request.actionCode == window.pyloadActionCodes.activatePyloadLinkGrabber)
-        {
+	window.addEventListener('message', function(e) {
+		var request = jQuery.parseJSON(e.data);
+		var returnObject = null;
+		if(request.actionCode == window.pyloadActionCodes.activatePyloadLinkGrabber)
+		{
 			window.pyloadLinkGrabberInterval = window.setInterval(pyloadCaptchaCompletedCallback, 1000);
-        }
-    });
+		}
+	});
 
 	// modified function from share-online
 	// on first call, it returns some crazy value: "result:chk||...27 alphanumeric characters..."
 	// on a second call (after 30s!), it returns a valid download link
 	// both values are stored in file[5]
-    window.pyloadGrabDownloadLink = function()
-    {
-        if(captcha)
+	window.pyloadGrabDownloadLink = function()
+	{
+		if(captcha)
 		{
 			$.ajax({
 				type: "POST",
@@ -87,26 +87,26 @@
 			});
 		}
 		return file[5];
-    };
+	};
 
 	// function that is called when the captcha is completed
-    window.pyloadCaptchaCompletedCallback = function()
-    {
-        if(pyloadIsCaptchaCompleted())
-        {
+	window.pyloadCaptchaCompletedCallback = function()
+	{
+		if(pyloadIsCaptchaCompleted())
+		{
 			// captcha is completed -> disable 1s timer which checks if captcha is completed
 			window.clearInterval(window.pyloadLinkGrabberInterval);
 			window.pyloadLinkGrabberInterval = false;
 
 			// get download link
-            var pyloadDownloadLink = pyloadGrabDownloadLink();
-            if(pyloadDownloadLink.startsWith("http"))
-            {
+			var pyloadDownloadLink = pyloadGrabDownloadLink();
+			if(pyloadDownloadLink.startsWith("http"))
+			{
 				// yes, we got a valid download link!
 				// pass the download link to the callback function on the pyload page
-                var returnObject = {actionCode: window.pyloadActionCodes.sendDownloadLink, value: pyloadDownloadLink};
-                parent.postMessage(JSON.stringify(returnObject),"*");
-            }
+				var returnObject = {actionCode: window.pyloadActionCodes.sendDownloadLink, value: pyloadDownloadLink};
+				parent.postMessage(JSON.stringify(returnObject),"*");
+			}
 			else
 			{
 				// pyloadGrabDownloadLink() returns a crazy value on the first call, therefore, we have to call it again
@@ -114,12 +114,12 @@
 				// otherwise the download link will not be valid
 				window.setTimeout(window.pyloadCaptchaCompletedCallback, wait*1000);
 			}
-        }
-    };
+		}
+	};
 
 	// checks if the captcha is completed
-    window.pyloadIsCaptchaCompleted = function()
-    {
-        return grecaptcha && grecaptcha.getResponse().length !== 0;
-    };
+	window.pyloadIsCaptchaCompleted = function()
+	{
+		return grecaptcha && grecaptcha.getResponse().length !== 0;
+	};
 })();
